@@ -16,7 +16,8 @@ class AdminController extends Controller
     		}
     		else
     		{
-    			echo "Failed"; die;
+    			// echo "Failed"; die;
+    			return redirect('/admin')->with('flash_message_error','Invalid Username or Password ');
     		}
     	}
     	return view('admin.admin_login');
