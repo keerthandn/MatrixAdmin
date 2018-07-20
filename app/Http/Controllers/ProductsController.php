@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Input;
 
 use App\Product;
 use App\Category;
+use App\ProductsAttribute;
 use Auth;
 use Session;
 use Image;
@@ -120,6 +121,7 @@ class ProductsController extends Controller
             return redirect()->back()->with('flash_message_success','Product has been updated Successfully!');
         }
         $productDetails=Product::where(['id'=>$id])->first();
+        // echo "<pre>"; print_r($productDetails); die;
         $categories=Category::where(['parent_id'=>0])->get();
         $categories_dropdown="<option selected disabled>Select</option>";
         foreach($categories as $cat)
@@ -161,5 +163,12 @@ class ProductsController extends Controller
     {
         Product::where(['id'=>$id])->delete();
         return redirect()->back()->with('flash_message_success','Product has been deleted successfully!');
+    }
+
+    public function addAttributes(Request $request,$id=null)
+    {
+        $productDetails=Product::where(['id'=>$id])->first();
+        // echo "<pre>"; print_r($productDetails); die;
+        return view('admin.products.add_attributes')->with(compact('productDetails'));
     }
 }
