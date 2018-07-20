@@ -47,7 +47,7 @@
                   <td>{{ $category->url }}</td>
                   <td class="center">
                  	<a href="{{ url('/admin/edit-category/'.$category->id)}}" class="btn btn-primary btn-mini">Edit</a>
-                 	<a id="delCat" href="{{ url('/admin/delete-category/'.$category->id)}}" class="btn btn-danger btn-mini">Delete</a></td>
+                 	<a id="delCat" onclick="return confirm('Are you sure you want to delete category?')" href="{{ url('/admin/delete-category/'.$category->id)}}" class="btn btn-danger btn-mini">Delete</a></td>
             </div>
                 </tr>
                 @endforeach
