@@ -167,8 +167,37 @@ class ProductsController extends Controller
 
     public function addAttributes(Request $request,$id=null)
     {
-        $productDetails=Product::where(['id'=>$id])->first();
+        $productDetails=Product::with('attributes')->where(['id'=>$id])->first();
+        // $productDetails=json_decode(json_encode($productDetails));
         // echo "<pre>"; print_r($productDetails); die;
+
+        if($request->isMethod('post'))
+        {
+            $data=$request->all();
+            // echo "<pre>"; print_r($data); die;
+
+            foreach($data['sku'] as $key=>$val)
+            {
+                if(!empty($val))
+                {
+                    $attributes=new ProductsAttribute;
+                    $attributes->product_id=$id;
+                    $attributes->sku=$val;
+                    $attributes->size=$data['size'][$key];
+                    $attributes->price=$data['price'][$key];
+                    $attributes->stock=$data['stock'][$key];
+                    $attributes->save();
+                }
+            }
+            return redirect('/admin/add-attributes/'.$id)->with('flash_message_success','Product Attributes has been added successfully!');
+        }
+      
         return view('admin.products.add_attributes')->with(compact('productDetails'));
+    }
+
+    public function deleteAttribute($id=null)
+    {
+        ProductsAttribute::where(['id'=>$id])->delete();
+        return redircet()->back()->with('flash_message_success','Attribute has been deleted successfully!');
     }
 }

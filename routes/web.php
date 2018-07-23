@@ -11,10 +11,12 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
+
+Route::get('/','IndexController@index');
 
 Auth::routes();
 
@@ -48,6 +50,9 @@ Route::group(['middleware'=>['auth']],function(){
 
 		Route::match(['get','post'],'/admin/add-attributes/{id}','ProductsController@addAttributes');
 
+		Route::get('/admin/delete-attribute/{id}','ProductsController@deleteAttribute');
+
 });
 
 Route::get('/logout','AdminController@logout');
+
