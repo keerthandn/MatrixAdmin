@@ -155,6 +155,37 @@ class ProductsController extends Controller
 
     public function deleteProductImage($id=null)
     {
+        // Get product image name
+        $productImage=Product::where(['id'=>$id])->first();
+        // echo $productImage->image; die;
+
+        // Get product image path
+        $large_image_path='images/backend_images/products/large/';
+        $medium_image_path='images/backend_images/products/medium/';
+        $small_image_path='images/backend_images/products/small/';
+
+        // Delete Large image if not exist in folder
+
+        if(file_exists($large_image_path.$productImage->image))
+        {
+            unlink($large_image_path.$productImage->image);
+        }
+
+        // Delete Medium image if not exist in folder
+
+        if(file_exists($medium_image_path.$productImage->image))
+        {
+            unlink($medium_image_path.$productImage->image);
+        }
+
+        // Delete Small image if not exist in folder
+
+        if(file_exists($small_image_path.$productImage->image))
+        {
+            unlink($small_image_path.$productImage->image);
+        }
+
+        // Delete image from product table.
         Product::where(['id'=>$id])->update(['image'=>'']);
         return redirect()->back()->with('flash_message_success','Product Image has been deleted successfully!');
     }
@@ -199,5 +230,55 @@ class ProductsController extends Controller
     {
         ProductsAttribute::where(['id'=>$id])->delete();
         return redircet()->back()->with('flash_message_success','Attribute has been deleted successfully!');
+    }
+
+    public function products($url=null)
+    {
+        $countCategory=Category::where(['url'=>$url,'status'=>1])->count();
+        if($countCategory==0)
+        {
+            abort(404);
+        }
+        $categories=Category::with('categories')->where(['parent_id'=>0])->get();
+        $categoryDetails=Category::where(['url'=>$url])->first();
+
+        if($categoryDetails->parent_id==0)
+        {
+            $subcategories=Category::where(['parent_id'=>$categoryDetails->id])->get();
+            $cat_ids="";
+            foreach($subcategories as $key=>$subcat)
+            {
+                // if($key==1) $cat_ids.=",";
+                $cat_ids.= $subcat->id.",";
+
+            }
+            
+            $productsAll=Product::whereIn('category_id',array($cat_ids))->get();
+            // $productsAll=json_decode(json_encode($productsAll));
+            // echo "<pre>"; print_r($productsAll); die;
+
+        }
+        else
+        {
+             $productsAll=Product::where(['category_id'=>$categoryDetails->id])->get();
+
+        }
+
+        // echo $categoryDetails->id; die;
+       
+        return view('products.listing')->with(compact('categories','categoryDetails','productsAll'));
+
+    }
+
+    public function product($id=null)
+    {
+        $productDetails=Product::with('attributes')->where('id',$id)->first();
+        $productDetails=json_decode(json_encode($productDetails));
+        // echo "<pre>"; print_r($productDetails); die;
+
+        // dd($productDetails);
+        $categories=Category::with('categories')->where(['parent_id'=>0])->get();
+
+        return view('products.detail')->with(compact('productDetails','categories'));
     }
 }

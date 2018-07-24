@@ -17,11 +17,17 @@
 
 
 Route::get('/','IndexController@index');
+Route::match(['get','post'],'/admin','AdminController@login');
 
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
-Route::match(['get','post'],'/admin','AdminController@login');
+
+//Category Listing page
+Route::get('/products/{url}','ProductsController@products');
+// Product detail page
+Route::get('/product/{id}','ProductsController@product');
+
 
 
 Route::group(['middleware'=>['auth']],function(){

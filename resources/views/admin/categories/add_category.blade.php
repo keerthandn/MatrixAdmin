@@ -40,9 +40,15 @@
                 </div>
               </div>              
               <div class="control-group">
-                <label class="control-label">URL (Start with http://)</label>
+                <label class="control-label">URL</label>
                 <div class="controls">
                   <input type="text" name="url" id="url">
+                </div>
+              </div>
+              <div class="control-group">
+                <label class="control-label">Enable</label>
+                <div class="controls">
+                  <input type="checkbox" name="status" id="status" value="1">
                 </div>
               </div>
               <div class="form-actions">
