@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Category;
+use Vinkla\Hashids\Facades\Hashids;
 
 class CategoryController extends Controller
 {
@@ -61,10 +62,10 @@ class CategoryController extends Controller
                 $status=1;
             }
 
-    		Category::where(['id'=>$id])->update([ 'name'=>$data['category_name'],'description'=>$data['description'],'url'=>$data['url'],'status'=>$status ]);
+    		Category::where(['id'=>Hashids::decode($id)])->update([ 'name'=>$data['category_name'],'description'=>$data['description'],'url'=>$data['url'],'status'=>$status ]);
     		return redirect('/admin/view-categories')->with('flash_message_success','Category updated Successfully!');
     	}
-    	$categoryDetails=Category::where(['id'=>$id])->first();
+    	$categoryDetails=Category::where(['id'=>Hashids::decode($id)])->first();
     	$levels=Category::where(['parent_id'=>0])->get();
     	return view('admin.categories.edit_category')->with(compact('categoryDetails','levels'));
     }
@@ -73,7 +74,7 @@ class CategoryController extends Controller
     {
     	if(!empty($id))
     	{
-    		Category::where(['id'=>$id])->delete();
+    		Category::where(['id'=>Hashids::decode($id)])->delete();
     		return redirect()->back()->with('flash_message_success','Category deleted Successfully!');
     	}
     }

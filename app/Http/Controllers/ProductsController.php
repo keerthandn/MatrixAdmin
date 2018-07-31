@@ -11,6 +11,7 @@ use App\ProductsAttribute;
 use Auth;
 use Session;
 use Image;
+use Vinkla\Hashids\Facades\Hashids;
 
 class ProductsController extends Controller
 {
@@ -73,11 +74,12 @@ class ProductsController extends Controller
     public function viewProducts(request $request,$id=null)
     {
         $products=Product::get();
-        $products=json_decode(json_encode($products));
+        // $products=json_decode(json_encode($products));
         foreach($products as $key=>$val)
         {
             $category_name=Category::where(['id'=>$val->category_id])->first();
             $products[$key]->category_name=$category_name->name;
+            $products[$key]->id =$val->id;
         }
         // echo "<pre>"; print_r($products); die;
         return view('admin.products.view_products')->with(compact('products'));
@@ -120,7 +122,7 @@ class ProductsController extends Controller
 
             return redirect()->back()->with('flash_message_success','Product has been updated Successfully!');
         }
-        $productDetails=Product::where(['id'=>$id])->first();
+        $productDetails=Product::where(['id'=>Hashids::decode($id)])->first();
         // echo "<pre>"; print_r($productDetails); die;
         $categories=Category::where(['parent_id'=>0])->get();
         $categories_dropdown="<option selected disabled>Select</option>";
@@ -198,7 +200,7 @@ class ProductsController extends Controller
 
     public function addAttributes(Request $request,$id=null)
     {
-        $productDetails=Product::with('attributes')->where(['id'=>$id])->first();
+        $productDetails=Product::with('attributes')->where(['id'=>Hashids::decode($id)])->first();
         // $productDetails=json_decode(json_encode($productDetails));
         // echo "<pre>"; print_r($productDetails); die;
 
